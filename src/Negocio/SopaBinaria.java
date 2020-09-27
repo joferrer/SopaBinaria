@@ -22,7 +22,8 @@ public class SopaBinaria {
          
     }
     /**
-     * Metodo que convierte un entero en un array de objetos de tipo Bit 
+     * Metodo que convierte un entero en un array de objetos de tipo Bit. 
+     * Es la representación en binario del entero ingresado.
      * @param decimal
      * @return Array de objetos tipo Bit
      */
