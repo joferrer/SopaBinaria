@@ -16,7 +16,6 @@ public class Bit {
     public Bit(boolean valor) {
         this.valor = valor;
     }
-
     public Bit() {
     }
 
