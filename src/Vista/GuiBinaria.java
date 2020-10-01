@@ -162,7 +162,8 @@ public class GuiBinaria extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    /**
+ 
+   /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
@@ -197,7 +198,6 @@ public class GuiBinaria extends javax.swing.JFrame {
             }
         });
     }
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCargar;
     private javax.swing.JButton btnNumero;

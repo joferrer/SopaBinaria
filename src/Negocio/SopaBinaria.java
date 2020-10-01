@@ -18,7 +18,9 @@ public class SopaBinaria {
     public SopaBinaria() {
     }
     
+
      public SopaBinaria(String rutaArchivoExcel) {    
+
     }
     /**
      * Metodo que convierte un entero en un array de objetos de tipo Bit. 
