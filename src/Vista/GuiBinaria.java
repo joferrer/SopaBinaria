@@ -5,7 +5,7 @@
  */
 package Vista;
 
-
+import Negocio.SopaBinaria;
 import Vista.LeerMatriz_Excel;
 import java.awt.Color;
 import java.io.File;
@@ -23,6 +23,8 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 public class GuiBinaria extends javax.swing.JFrame {
  
      private String matrizExcel[][];
+     
+     private SopaBinaria miExcel;
    
     /**
      * Creates new form GuiBinaria
@@ -64,6 +66,11 @@ public class GuiBinaria extends javax.swing.JFrame {
         });
 
         btnNumero.setText("Buscar un número decimal");
+        btnNumero.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNumeroActionPerformed(evt);
+            }
+        });
 
         txtImprimir.setColumns(20);
         txtImprimir.setRows(5);
@@ -132,6 +139,8 @@ public class GuiBinaria extends javax.swing.JFrame {
 
     private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
         // TODO add your handling code here:
+        
+        
     }//GEN-LAST:event_jTextField1ActionPerformed
 
     private void btnCargarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCargarActionPerformed
@@ -144,14 +153,17 @@ public class GuiBinaria extends javax.swing.JFrame {
         File fileName = archivo.getSelectedFile();
         if(fileName !=null){
          try {
-           LeerMatriz_Excel miExcel=new LeerMatriz_Excel(fileName.getAbsolutePath(),0);
+           miExcel=new SopaBinaria(fileName.getAbsolutePath(),0);
            this.jTextField1.setText(fileName.getAbsolutePath());
            this.txtImprimir.setText(miExcel.toString());
-           this.matrizExcel=miExcel.getMatriz();
+           this.matrizExcel=miExcel.getMatrizEnString();
            this.jButton1.setEnabled(true);
         } catch (IOException ex) {
                 this.txtImprimir.setText("Ocurrió un error al cargar el archivo:"+ex.getMessage());
             }
+         catch(Exception ex2){
+             this.txtImprimir.setText("Ocurrió un error al cargar el archivo:"+ex2.getMessage());
+         }
         }else
             this.jTextField1.setText("No ha seleccionado ningún archivo");
         
@@ -160,7 +172,15 @@ public class GuiBinaria extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
+      
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void btnNumeroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNumeroActionPerformed
+        // TODO add your handling code here:
+        int decimal=Integer.parseInt(jTextField1.getText());
+        
+        jTextField1.setText(this.miExcel.buscar(decimal));
+    }//GEN-LAST:event_btnNumeroActionPerformed
 
  
    /**

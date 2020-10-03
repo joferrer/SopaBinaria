@@ -27,6 +27,26 @@ public class Bit {
         this.valor = valor;
     }
     
+    @Override
+    public String toString()
+    {
+        String valor ="0";
+        if(isValor()){
+            valor="1";
+            return valor;
+        }
+        else return valor;
+    }
+    
+    
+    public boolean equals(Bit pBit){
+        boolean isEquals=false;
+        if(pBit.isValor()==this.isValor())
+           isEquals=true;
+        
+        return isEquals;
+    
+    }
     
     
 }
