@@ -22,6 +22,7 @@ public class SopaBinaria {
     private Bit mySopaBinaria[][];
 
     private ArrayList<int[]> posciones;
+    private ArrayList<int[]> solucionHorizontal;
 
     public SopaBinaria() {
     }
@@ -89,6 +90,7 @@ public class SopaBinaria {
     }
 
     public int getCuantasVeces_Horizontal(int decimal) {
+        this.solucionHorizontal=new ArrayList();
         int contador = 0;
         switch (decimal) {
             case 1:
@@ -115,10 +117,16 @@ public class SopaBinaria {
                             if (!mySopaBinaria[pos[0]][i].equals(numero[iNumero])) {
                                 break;
                             }
+                            
 
                             if (iNumero == numero.length - 1) {
                                 encontro = true;
-                                System.out.println("ASASA" + pos[0] + " , " + i + " , " + iNumero);
+                                //System.out.println("ASASA" + pos[0] + " , " + i + " , " + iNumero);
+                                this.solucionHorizontal.add(pos);
+                                int fin[]= new int[2];
+                                fin[0]=pos[0];
+                                fin[1]=i;
+                                this.solucionHorizontal.add(fin);
                                 contador++;
                             }
                             iNumero++;
@@ -134,11 +142,17 @@ public class SopaBinaria {
                             if (!mySopaBinaria[pos[0]][i].equals(numero[iNumero])) {
                                 break;
                             }
+                             
 
                             if (iNumero == numero.length - 1) {
                                 encontro = true;
                                 contador++;
-                                System.out.println("Reves" + pos[0] + " , " + i);
+                                //System.out.println("Reves" + pos[0] + " , " + i);
+                                this.solucionHorizontal.add(pos);
+                                int fin[]= new int[2];
+                                fin[0]=pos[0];
+                                fin[1]=i;
+                                this.solucionHorizontal.add(fin);
                             }
                             iNumero++;
                         }
@@ -266,6 +280,8 @@ public class SopaBinaria {
                 + this.getCuantasVeces_Horizontal(decimal);
         msg = "Se econtro el numero decimal " + decimal + " en binario: " + decimalBinario
                 + " " + cuantasVecesTotal + " veces en la sopa binaria.";
+        
+        buscarUnosPrueba();
         return msg;
 
     }
@@ -294,8 +310,8 @@ public class SopaBinaria {
     }
 
     private void buscarUnosPrueba() {
-        for (int i = 0; i < this.posciones.size(); i++) {
-            int pos[] = this.posciones.get(i);
+        for (int i = 0; i < this.solucionHorizontal.size(); i++) {
+            int pos[] = this.solucionHorizontal.get(i);
             System.out.println(pos[0] + "," + pos[1]);
 
         }
