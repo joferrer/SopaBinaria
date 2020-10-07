@@ -7,8 +7,12 @@ package Negocio;
 
 import Modelo.Bit;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -21,14 +25,22 @@ public class SopaBinaria {
 
     private Bit mySopaBinaria[][];
 
-    private ArrayList<int[]> posciones;
-    private ArrayList<int[]> solucionHorizontal;
+    private int[][] posicionesSolucion;
+
+    private int[][] solucionesHorizontal;
+
+    private int[][] solucionesVerticales;
+
+    FileOutputStream elFichero;
+    //private ArrayList<int[]> posciones;
+    //private ArrayList<int[]> solucionHorizontal;
 
     public SopaBinaria() {
     }
 
     public SopaBinaria(String rutaArchivoExcel, int pHoja) throws IOException, Exception {
 
+        int contadorUnos = 0;
         HSSFWorkbook archivoExcel = new HSSFWorkbook(new FileInputStream(rutaArchivoExcel));
         //Obtiene la hoja 1
         HSSFSheet hoja = archivoExcel.getSheetAt(pHoja);
@@ -54,6 +66,7 @@ public class SopaBinaria {
                     case "1":
                         nuevo.setValor(true);
                         this.mySopaBinaria[i][j] = nuevo;
+                        contadorUnos++;
                         break;
 
                     default:
@@ -64,6 +77,8 @@ public class SopaBinaria {
             }
 
         }
+        this.posicionesSolucion = new int[contadorUnos][2];
+
     }
 
     /**
@@ -90,132 +105,108 @@ public class SopaBinaria {
     }
 
     public int getCuantasVeces_Horizontal(int decimal) {
-        this.solucionHorizontal=new ArrayList();
+        int tamano = this.mySopaBinaria.length * this.mySopaBinaria[0].length;
+        this.solucionesHorizontal = new int[tamano * 2][this.posicionesSolucion[0].length];
         int contador = 0;
-        switch (decimal) {
-            case 1:
-                contador = this.posciones.size();
-                break;
-            case 0:
-                contador = (mySopaBinaria.length * mySopaBinaria[0].length) - this.posciones.size();
-                break;
-            default:
-
-                Bit numero[] = obtenerDecimalEnBits(decimal);
-
-                boolean encontro = false;
-
-                //Busque hacia la derecha
-                for (int[] pos : this.posciones) {
-
-                    System.out.println("SDS: " + pos[0] + " , " + pos[1]);
-                    if (pos[1] + numero.length - 1 < this.mySopaBinaria[pos[0]].length) {
-                        int iNumero = 0;
-                        for (int i = pos[1]; i < pos[1] + numero.length; i++) {
-
-                            //System.out.println(i+" , "+iNumero+" , "+pos[0]);
-                            if (!mySopaBinaria[pos[0]][i].equals(numero[iNumero])) {
-                                break;
-                            }
-                            
-
-                            if (iNumero == numero.length - 1) {
-                                encontro = true;
-                                //System.out.println("ASASA" + pos[0] + " , " + i + " , " + iNumero);
-                                this.solucionHorizontal.add(pos);
-                                int fin[]= new int[2];
-                                fin[0]=pos[0];
-                                fin[1]=i;
-                                this.solucionHorizontal.add(fin);
-                                contador++;
-                            }
-                            iNumero++;
-
-                        }
+        Bit numero[] = obtenerDecimalEnBits(decimal);
+        int iNumero = 0;
+        for (int[] pos : this.posicionesSolucion) {
+            //Busque hacia la derecha
+            if (pos[1] + numero.length - 1 < this.mySopaBinaria[pos[0]].length) {
+                iNumero = 0;
+                for (int i = pos[1]; i < pos[1] + numero.length; i++) {
+                    if (!mySopaBinaria[pos[0]][i].equals(numero[iNumero])) {
+                        break;//Rompe en el momento que una de los bits no se igual al buscado
                     }
-
-                    //i>=0
-                    if (pos[1] - (numero.length - 1) >= 0) {
-                        System.out.println("***************************");
-                        int iNumero = 0;
-                        for (int i = pos[1]; i >= pos[1] - (numero.length - 1); i--) {
-                            if (!mySopaBinaria[pos[0]][i].equals(numero[iNumero])) {
-                                break;
-                            }
-                             
-
-                            if (iNumero == numero.length - 1) {
-                                encontro = true;
-                                contador++;
-                                //System.out.println("Reves" + pos[0] + " , " + i);
-                                this.solucionHorizontal.add(pos);
-                                int fin[]= new int[2];
-                                fin[0]=pos[0];
-                                fin[1]=i;
-                                this.solucionHorizontal.add(fin);
-                            }
-                            iNumero++;
-                        }
+                    if (iNumero == numero.length - 1) {
+                        agregarPos(pos, i, contador, 1);
+                        contador++;
                     }
-
+                    iNumero++;
                 }
-                break;
+            }
+            //Busque hacia la izquierda
+            if (pos[1] - (numero.length - 1) >= 0) {
+                iNumero = 0;
+                for (int i = pos[1]; i >= pos[1] - (numero.length - 1); i--) {
+                    if (!mySopaBinaria[pos[0]][i].equals(numero[iNumero])) {
+                        break; //Rompe en el momento que una de los bits no se igual al buscado
+                    }
+                    if (iNumero == numero.length - 1) {
+                        agregarPos(pos, i, contador, 1);
+                        contador++;
+                    }
+                    iNumero++;
+                }
+            }
         }
+
         return contador;
     }
 
-    public int getCuantasVeces_Vertical(int decimal) {
+    /**
+     * Este metodo agrega la posición inicial y final de los bits que encontró
+     * como respuesta
+     *
+     * @param pos
+     * @param i
+     */
+    private void agregarPos(int[] pos, int i, int contador, int tipo) {
 
-        int contador = 0;
-
-        switch (decimal) {
+        int fin[] = new int[2];
+        fin[0] = pos[0];
+        fin[1] = i;
+        switch (tipo) {
             case 1:
-                contador = this.posciones.size();
+                this.solucionesHorizontal[2 * contador] = pos;
+                this.solucionesHorizontal[2 * contador + 1] = fin;
                 break;
-            case 0:
-                contador = (mySopaBinaria.length * mySopaBinaria[0].length) - this.posciones.size();
+
+            case 2:
+                this.solucionesVerticales[2 * contador] = pos;
+                this.solucionesVerticales[2 * contador + 1] = fin;
                 break;
-            default:
-                Bit numero[] = obtenerDecimalEnBits(decimal);
-                boolean encontro = false;
-                //Busque hacia la derecha
-                for (int[] pos : this.posciones) {
 
-                    if (pos[0] + numero.length - 1 < this.mySopaBinaria.length) {
-                        int iNumero = 0;
-                        for (int i = pos[0]; i < this.mySopaBinaria.length; i++) {
-
-                            if (!mySopaBinaria[pos[0]][i].equals(numero[iNumero])) {
-                                break;
-                            }
-
-                            if (iNumero == numero.length - 1) {
-                                encontro = true;
-                                contador++;
-                            }
-                            iNumero++;
-                        }
-                    }
-
-                    if (pos[1] - (numero.length - 1) >= 0) {
-                        System.out.println("***************************");
-                        int iNumero = 0;
-                        for (int i = pos[1]; i >= 0; i--) {
-                            if (!mySopaBinaria[pos[0]][i].equals(numero[iNumero])) {
-                                break;
-                            }
-
-                            if (iNumero == numero.length - 1) {
-                                encontro = true;
-                                contador++;
-                            }
-                            iNumero++;
-                        }
-                    }
-
-                }
-                break;
         }
+    }
+
+    public int getCuantasVeces_Vertical(int decimal) {
+        int tamano = this.mySopaBinaria.length * this.mySopaBinaria[0].length;
+        this.solucionesVerticales = new int[tamano * 2][this.posicionesSolucion[0].length];
+        int contador = 0;
+        Bit numero[] = obtenerDecimalEnBits(decimal);
+        int iNumero = 0;
+        for (int[] pos : this.posicionesSolucion) {
+            //Busque hacia abajo
+            if (pos[0] + numero.length - 1 < this.mySopaBinaria.length) {
+                iNumero = 0;
+                for (int i = pos[0]; i < pos[0] + numero.length; i++) {
+                    if (!mySopaBinaria[i][pos[1]].equals(numero[iNumero])) {
+                        break;//Rompe en el momento que una de los bits no se igual al buscado
+                    }
+                    if (iNumero == numero.length - 1) {
+                        agregarPos(pos, i, contador, 2);
+                        contador++;
+                    }
+                    iNumero++;
+                }
+            }
+            //Busque hacia arriba
+            if (pos[0] - (numero.length - 1) >= 0) {
+                iNumero = 0;
+                for (int i = pos[0]; i >= pos[0] - (numero.length - 1); i--) {
+                    if (!mySopaBinaria[i][pos[1]].equals(numero[iNumero])) {
+                        break; //Rompe en el momento que una de los bits no se igual al buscado
+                    }
+                    if (iNumero == numero.length - 1) {
+                        agregarPos(pos, i, contador, 2);
+                        contador++;
+                    }
+                    iNumero++;
+                }
+            }
+        }
+
         return contador;
     }
 
@@ -251,6 +242,11 @@ public class SopaBinaria {
         return this.mySopaBinaria;
     }
 
+    /**
+     *
+     * @return
+     */
+    @Override
     public String toString() {
         String msg = "";
         for (Bit filas[] : this.mySopaBinaria) {
@@ -263,7 +259,7 @@ public class SopaBinaria {
         return msg;
     }
 
-    public String buscar(int decimal) {
+    public String buscar(int decimal) throws IOException {
 
         System.out.println(toString());
         String msg = "";
@@ -275,21 +271,33 @@ public class SopaBinaria {
         for (Bit bit : numero) {
             decimalBinario += bit.toString();
         }
+        int contador = 0;
+        switch (decimal) {
+            case 1: //Caso en el que se busque el numero 1
+                contador = this.posicionesSolucion.length;
+                break;
+            case 0: //Caso en el que se busque el numero 0
+                contador = (mySopaBinaria.length * mySopaBinaria[0].length) - this.posicionesSolucion.length;
+                break;
+            default:
+                contador = this.getCuantasVeces_Vertical(decimal);
 
-        int cuantasVecesTotal = this.getCuantasVeces_Diagonal(decimal)
-                + this.getCuantasVeces_Horizontal(decimal);
+        }
+
         msg = "Se econtro el numero decimal " + decimal + " en binario: " + decimalBinario
-                + " " + cuantasVecesTotal + " veces en la sopa binaria.";
-        
-        buscarUnosPrueba();
+                + " , " + contador + " veces en la sopa binaria.";
+
+        buscarUnosPrueba(2);//Si se trata de 1 o 0 toca usar la lista soluciones.
         return msg;
 
     }
 
+    /**
+     * Busca todas las casillas que contengan "1"
+     */
     private void buscarUnos() {
 
-        this.posciones = new ArrayList<int[]>();
-
+        int k = 0;
         for (int i = 0; i < this.mySopaBinaria.length; i++) {
             for (int j = 0; j < this.mySopaBinaria[i].length; j++) {
 
@@ -299,7 +307,8 @@ public class SopaBinaria {
 
                 //System.out.println(pos[0]+","+pos[1]);
                 if (this.mySopaBinaria[i][j].isValor()) {
-                    this.posciones.add(pos);
+                    this.posicionesSolucion[k] = pos;
+                    k++;
                 }
                 //System.out.println(this.mySopaBinaria[i][j].isValor());
 
@@ -309,12 +318,27 @@ public class SopaBinaria {
 
     }
 
-    private void buscarUnosPrueba() {
-        for (int i = 0; i < this.solucionHorizontal.size(); i++) {
-            int pos[] = this.solucionHorizontal.get(i);
-            System.out.println(pos[0] + "," + pos[1]);
+    private void buscarUnosPrueba(int caso) {
+        switch (caso) {
+            case 1:
+                for (int i = 0; i < this.solucionesHorizontal.length; i++) {
+                    int pos[] = this.solucionesHorizontal[i];
+                    System.out.println(pos[0] + "," + pos[1]);
+                }
+                break;
+
+            case 2:
+                for (int i = 0; i < this.solucionesVerticales.length; i++) {
+                    int pos[] = this.solucionesVerticales[i];
+                    System.out.println(pos[0] + "," + pos[1]);
+                    
+                }
+            break;
 
         }
+
     }
 
 }
+
+
