@@ -281,7 +281,7 @@ public class SopaBinaria {
                 contador = (mySopaBinaria.length * mySopaBinaria[0].length) - this.posicionesSolucion.length;
                 break;
             default:
-                contador = this.getCuantasVeces_Vertical(decimal);
+                contador = this.getCuantasVeces_Vertical(decimal)+this.getCuantasVeces_Horizontal(decimal);
 
         }
         if(contador == 1){
@@ -289,7 +289,7 @@ public class SopaBinaria {
         }else{
         msg = "Se econtro el numero decimal " + decimal + " en binario : " + decimalBinario+"\n"+ contador + " veces en la sopa binaria.";
         }
-        buscarUnosPrueba(2);//Si se trata de 1 o 0 toca usar la lista soluciones.
+        //buscarUnosPrueba(2);//Si se trata de 1 o 0 toca usar la lista soluciones.
         return msg;
 
     }
@@ -330,7 +330,7 @@ public class SopaBinaria {
                 break;
 
             case 2:
-                for (int i = 0; i < this.solucionesVerticales.length; i++) {
+               for (int i = 0; i < this.solucionesVerticales.length; i++) {
                     int pos[] = this.solucionesVerticales[i];
                     System.out.println(pos[0] + "," + pos[1]);
                     
