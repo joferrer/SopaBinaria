@@ -16,6 +16,7 @@ import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+ 
 
 /**
  *
@@ -283,10 +284,11 @@ public class SopaBinaria {
                 contador = this.getCuantasVeces_Vertical(decimal);
 
         }
-
-        msg = "Se econtro el numero decimal " + decimal + " en binario: " + decimalBinario
-                + " , " + contador + " veces en la sopa binaria.";
-
+        if(contador == 1){
+         msg = "Se econtro el numero decimal " + decimal + " en binario : " + decimalBinario+"\n"+ contador + " vez en la sopa binaria.";
+        }else{
+        msg = "Se econtro el numero decimal " + decimal + " en binario : " + decimalBinario+"\n"+ contador + " veces en la sopa binaria.";
+        }
         buscarUnosPrueba(2);//Si se trata de 1 o 0 toca usar la lista soluciones.
         return msg;
 
