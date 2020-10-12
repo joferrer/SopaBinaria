@@ -308,7 +308,7 @@ public class GuiBinaria extends javax.swing.JFrame {
          } catch (IOException ex) {
              Logger.getLogger(GuiBinaria.class.getName()).log(Level.SEVERE, null, ex);
        
-       } 
+       }
        }     
     }//GEN-LAST:event_btnNumeroActionPerformed
 
@@ -325,6 +325,7 @@ public class GuiBinaria extends javax.swing.JFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
+        Eliminado();
         this.btnCargar.setEnabled(true);
         this.txtImprimir.setText("");
         this.jTextField1.setText("");
@@ -435,7 +436,17 @@ public class GuiBinaria extends javax.swing.JFrame {
         return icono;    
 
     }  
-   
+      public Icon Eliminado(){
+    
+    ImageIcon icon = new ImageIcon(getClass().getResource("/Imagen/3.png"));
+       
+       
+        ImageIcon icono = new ImageIcon(icon.getImage().getScaledInstance(150,150,Image.SCALE_DEFAULT ));
+        JOptionPane.showMessageDialog(null,"Se ha desechado todo correctamente,\n puedes volver a cargar una nueva sopa binaria.","Eliminado",JOptionPane.INFORMATION_MESSAGE,icono);
+        return icono;    
+
+    }
+    
  
    
     
