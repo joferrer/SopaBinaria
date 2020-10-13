@@ -31,6 +31,8 @@ public class SopaBinaria {
     private int[][] solucionesHorizontal;
 
     private int[][] solucionesVerticales;
+    
+    private int [][] solucionesInclinada;
 
     FileOutputStream elFichero;
     //private ArrayList<int[]> posciones;
@@ -167,6 +169,11 @@ public class SopaBinaria {
                 this.solucionesVerticales[2 * contador] = pos;
                 this.solucionesVerticales[2 * contador + 1] = fin;
                 break;
+                
+            case 3:
+                this.solucionesInclinada[2 * contador] = pos;
+                this.solucionesInclinada[2 * contador + 1] = fin;
+                break;
 
         }
     }
@@ -212,7 +219,103 @@ public class SopaBinaria {
     }
 
     public int getCuantasVeces_Diagonal(int decimal) {
-        return 0;
+       int tamano = this.mySopaBinaria.length * this.mySopaBinaria[0].length;
+        this.solucionesInclinada = new int[tamano * 4][this.posicionesSolucion[0].length];
+        int contador = 0;
+        Bit numero[] = obtenerDecimalEnBits(decimal);
+        int iNumero = 0;
+        int prueba=0;
+        for (int[] pos : this.posicionesSolucion) {
+            //Busque hacia abajo a la derecha
+            if (pos[0] + numero.length - 1 < this.mySopaBinaria.length && 
+                    pos[1] + numero.length - 1 < this.mySopaBinaria[pos[0]].length) {
+                iNumero = 0;
+                int j=pos[0];
+                
+                for (int i = pos[1]; i < pos[1] + numero.length; i++) {
+                    
+                    if (!mySopaBinaria[j][i].equals(numero[iNumero])) {
+                        break;//Rompe en el momento que una de los bits no se igual al buscado
+                    }
+                    if (iNumero == numero.length - 1) {
+                        agregarPos(pos, i, contador, 3);
+                        contador++;
+                    }
+                    iNumero++;
+                    j++;
+                    
+                }
+            }
+            //Busque hacia arriba a la izquierda
+            
+            if (pos[0] - (numero.length - 1) >= 0 && pos[1] - (numero.length - 1) >= 0) {
+                iNumero = 0;
+                
+                prueba++;
+                int j = pos[0];
+                for (int i = pos[1]; i >= pos[1] - (numero.length - 1) && 
+                        j>=pos[0] - (numero.length - 1); i--) {                    
+                    if (!mySopaBinaria[j][i].equals(numero[iNumero])) {
+                        break; //Rompe en el momento que una de los bits no se igual al buscado
+                    }
+                    if (iNumero == numero.length - 1) {
+                        agregarPos(pos, i, contador, 3);
+                        contador++;
+                    }
+                    iNumero++;
+                    j--;
+                    
+                }
+            }
+            //Abajo a la izquierda
+            if (pos[0] + numero.length - 1 < this.mySopaBinaria.length && 
+                    pos[1] - (numero.length - 1) >= 0) {
+                iNumero = 0;
+                int j=pos[1];
+                //pos[0] + numero.length - 1 < this.mySopaBinaria.length Abajo
+                //pos[1] - (numero.length - 1) >= 0 Izquierda
+                //int i = pos[0]; i < pos[0] + numero.length; i++
+                for (int i = pos[0]; i < pos[0] + numero.length; i++) {
+                    
+                    if (!mySopaBinaria[i][j].equals(numero[iNumero])) {
+                        break;//Rompe en el momento que una de los bits no se igual al buscado
+                    }
+                    if (iNumero == numero.length - 1) {
+                        agregarPos(pos, i, contador, 3);
+                        contador++;
+                    }
+                    iNumero++;
+                    j--;
+                    //System.out.println("CASSASASA 1: "+ prueba);
+                    
+                }
+            }
+            //Busque hacia arriba a la derecha
+            //pos[0] - (numero.length - 1) >= 0 Arriba
+            //pos[1] + numero.length - 1 < this.mySopaBinaria[pos[0]].length Derecha
+            
+            if (pos[0] - (numero.length - 1) >= 0 && pos[1] + numero.length - 1 < this.mySopaBinaria[pos[0]].length) {
+                iNumero = 0;
+                
+                prueba++;
+                int j = pos[1];
+                //i < pos[1] + numero.length Derecha
+                for (int i = pos[0]; i >= pos[0] - (numero.length - 1); i--) {                    
+                    if (!mySopaBinaria[i][j].equals(numero[iNumero])) {
+                        break; //Rompe en el momento que una de los bits no se igual al buscado
+                    }
+                    if (iNumero == numero.length - 1) {
+                        agregarPos(pos, i, contador, 3);
+                        contador++;
+                    }
+                    iNumero++;
+                    j++;
+                    //System.out.println("CASSASASA 2 : "+ prueba);
+                }
+            }
+        }
+
+        return contador;
     }
 
     public String[][] getMatrizEnString() {
@@ -281,7 +384,7 @@ public class SopaBinaria {
                 contador = (mySopaBinaria.length * mySopaBinaria[0].length) - this.posicionesSolucion.length;
                 break;
             default:
-                contador = this.getCuantasVeces_Vertical(decimal)+this.getCuantasVeces_Horizontal(decimal);
+                contador = this.getCuantasVeces_Diagonal(decimal);
 
         }
         if(contador == 1){
@@ -289,7 +392,7 @@ public class SopaBinaria {
         }else{
         msg = "Se econtro el numero decimal " + decimal + " en binario : " + decimalBinario+"\n"+ contador + " veces en la sopa binaria.";
         }
-        //buscarUnosPrueba(2);//Si se trata de 1 o 0 toca usar la lista soluciones.
+        buscarUnosPrueba(3);//Si se trata de 1 o 0 toca usar la lista soluciones.
         return msg;
 
     }
@@ -336,6 +439,14 @@ public class SopaBinaria {
                     
                 }
             break;
+            case 3:
+                for (int i = 0; i < this.solucionesInclinada.length; i++) {
+                    int pos[] = this.solucionesInclinada[i];
+                    System.out.println(pos[0] + "," + pos[1]);
+                    
+                }
+            break;
+                
 
         }
 

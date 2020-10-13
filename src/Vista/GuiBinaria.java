@@ -300,16 +300,20 @@ public class GuiBinaria extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "No se ha digitado ningun valor.", "¡ATENCION!", JOptionPane.WARNING_MESSAGE );
          }else{
              try{
-             int decimal=Integer.parseInt(jTextField1.getText());
+                 int decimal=0;
+                 try{
+              decimal=Integer.parseInt(jTextField1.getText());
+             }catch(Exception e){
+                 JOptionPane.showMessageDialog(null, "Se ha introducido un caracter no valido", "¡ATENCION!", JOptionPane.WARNING_MESSAGE );
+             }
              txtImprimir.setText(this.miExcel.buscar(decimal));
              this.Limpiar.setEnabled(true);
              this.jButton1.setEnabled(true);
              this.btnCargar.setEnabled(false);
              }catch (IOException ex) {
              Logger.getLogger(GuiBinaria.class.getName()).log(Level.SEVERE, null, ex);
-             }catch(Exception e){
-                 JOptionPane.showMessageDialog(null, "Se ha introducido un caracter no valido", "¡ATENCION!", JOptionPane.WARNING_MESSAGE );
-             }
+             
+       }
        }
     }//GEN-LAST:event_btnNumeroActionPerformed
 
