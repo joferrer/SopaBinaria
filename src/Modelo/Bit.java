@@ -12,6 +12,16 @@ package Modelo;
 public class Bit {
     
     private boolean valor;
+    
+    private boolean marcado;
+
+    public boolean isMarcado() {
+        return marcado;
+    }
+
+    public void setMarcado(boolean marcado) {
+        this.marcado = marcado;
+    }
 
     public Bit(boolean valor) {
         this.valor = valor;
