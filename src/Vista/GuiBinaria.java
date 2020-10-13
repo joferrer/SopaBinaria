@@ -6,12 +6,21 @@
 package Vista;
 
 import Negocio.SopaBinaria;
-import Vista.LeerMatriz_Excel;
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
+
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.Font;
 import java.awt.Image;
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -252,7 +261,9 @@ public class GuiBinaria extends javax.swing.JFrame {
         
         
     }//GEN-LAST:event_jTextField1ActionPerformed
-
+ 
+     
+    
     private void btnCargarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCargarActionPerformed
         // TODO add your handling code here:
         JFileChooser archivo = new JFileChooser(".");
@@ -287,9 +298,43 @@ public class GuiBinaria extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        
         this.jButton2.setEnabled(true);
+        Document doc = new Document();
         
+        try {
+            FileOutputStream ficheroPdf = new FileOutputStream("src/Datos/Sol_SopaBinaria.pdf");
+            PdfWriter.getInstance(doc,ficheroPdf);
+            doc.open();
+            Paragraph parrafo = new Paragraph();
+            parrafo.add("Sancocho binario");
+            doc.add(parrafo);
+            //Creando una tabla:
+             int columnas=this.matrizExcel[0].length;
+             System.out.println(columnas);
+           PdfPTable tabla = new PdfPTable(columnas);
+             
+           for(int i=0;i<this.matrizExcel.length;i++)
+           {
+                for(int j=0;j<columnas;j++)
+                {
+                     PdfPCell celda = new PdfPCell(new Phrase(this.matrizExcel[i][j]));
+                     if(i == 0)
+                        celda.setBackgroundColor(BaseColor.GREEN);
+                     else
+                         celda.setBackgroundColor(BaseColor.WHITE);
+                    tabla.addCell(celda);
+                }
+             
+       
+           }
+            doc.add(tabla);
+            doc.close();
+            Pdf(doc);
+        } catch (Exception ex) {
+            System.err.println(ex.getMessage());
+        }
+        
+                                            
         
       
     }//GEN-LAST:event_jButton1ActionPerformed
@@ -451,6 +496,20 @@ public class GuiBinaria extends javax.swing.JFrame {
         return icono;    
 
     }
+      
+     public void Pdf(Document d){
+     
+          try {
+     File path = new File ("src/Datos/Sol_SopaBinaria.pdf");
+     Desktop.getDesktop().open(path);
+     }catch (IOException ex) {
+     ex.printStackTrace();
+}
+       
+         
+         
+     
+     }
     
  
    
