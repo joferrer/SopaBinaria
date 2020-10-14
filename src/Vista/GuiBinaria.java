@@ -310,22 +310,81 @@ public class GuiBinaria extends javax.swing.JFrame {
             doc.add(parrafo);
             //Creando una tabla:
              int columnas=this.matrizExcel[0].length;
-             System.out.println(columnas);
-           PdfPTable tabla = new PdfPTable(columnas);
              
+           PdfPTable tabla = new PdfPTable(columnas);
+           
+           int soluciones[][]=miExcel.posMarcadas();
+          
+           int col=0;
+          
+       
+           if("1".equals(jTextField1.getText())){
+           
            for(int i=0;i<this.matrizExcel.length;i++)
            {
                 for(int j=0;j<columnas;j++)
                 {
                      PdfPCell celda = new PdfPCell(new Phrase(this.matrizExcel[i][j]));
-                     if(i == 0)
-                        celda.setBackgroundColor(BaseColor.GREEN);
+                     if(this.matrizExcel[i][j].equals("1"))
+                        celda.setBackgroundColor(BaseColor.MAGENTA);
                      else
                          celda.setBackgroundColor(BaseColor.WHITE);
+                     
+                     
                     tabla.addCell(celda);
-                }
+}
              
        
+           }
+           }
+           else if("0".equals(jTextField1.getText())){
+               for(int i=0;i<this.matrizExcel.length;i++)
+           {
+                for(int j=0;j<columnas;j++)
+                {
+                     PdfPCell celda = new PdfPCell(new Phrase(this.matrizExcel[i][j]));
+                     if(this.matrizExcel[i][j].equals("0"))
+                        celda.setBackgroundColor(BaseColor.MAGENTA);
+                     else
+                         celda.setBackgroundColor(BaseColor.WHITE);
+                     
+                     
+                    tabla.addCell(celda);
+}
+             
+       
+           }
+           }
+           else{
+           for(int i=0;i<this.matrizExcel.length;i++)
+           {
+                for(int j=0;j<columnas;j++)
+                {
+                    
+                    
+                    int pos[]=soluciones[col];
+                    int fila =pos[0];
+                    int columna =pos[1];
+                    
+                     PdfPCell celda = new PdfPCell(new Phrase(this.matrizExcel[i][j]));
+                     if(i == fila && j==columna ){ 
+                       
+                         
+                        celda.setBackgroundColor(BaseColor.MAGENTA);
+                        
+                        if(col!=soluciones.length-1)col++;
+                        
+                     }
+                     else
+                         celda.setBackgroundColor(BaseColor.WHITE);
+                     
+                     
+                    tabla.addCell(celda);
+                    
+}
+             
+       
+           }
            }
             doc.add(tabla);
             doc.close();

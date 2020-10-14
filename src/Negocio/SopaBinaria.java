@@ -22,6 +22,11 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
  */
 public class SopaBinaria {
 
+    private int cantSoluciones;
+    private int cantSolucionesH;
+    private int cantSolucionesV;
+    private int cantSolucionesI;
+    
     private Bit mySopaBinaria[][];
 
     private int[][] posicionesSolucion;
@@ -105,6 +110,11 @@ public class SopaBinaria {
         return binario;
     }
 
+    /**
+     * Cuenta cuantas veces esta el numero en forma horizontal
+     * @param decimal
+     * @return 
+     */
     public int getCuantasVeces_Horizontal(int decimal) {
         int tamano = this.mySopaBinaria.length * this.mySopaBinaria[0].length;
         this.solucionesHorizontal = new int[tamano * 2][this.posicionesSolucion[0].length];
@@ -120,7 +130,7 @@ public class SopaBinaria {
                         break;//Rompe en el momento que una de los bits no se igual al buscado
                     }
                     if (iNumero == numero.length - 1) {
-                        agregarPos(pos, i, contador, 1);
+                        agregarPos(pos, i, contador, 1,0);
                         contador++;
                     }
                     iNumero++;
@@ -134,14 +144,14 @@ public class SopaBinaria {
                         break; //Rompe en el momento que una de los bits no se igual al buscado
                     }
                     if (iNumero == numero.length - 1) {
-                        agregarPos(pos, i, contador, 1);
+                        agregarPos(pos, i, contador, 1,0);
                         contador++;
                     }
                     iNumero++;
                 }
             }
         }
-
+        this.cantSolucionesH=contador;
         return contador;
     }
 
@@ -152,30 +162,42 @@ public class SopaBinaria {
      * @param pos
      * @param i
      */
-    private void agregarPos(int[] pos, int i, int contador, int tipo) {
+    private void agregarPos(int[] pos, int i, int contador, int tipo,int j) {
 
-        int fin[] = new int[2];
-        fin[0] = pos[0];
-        fin[1] = i;
+        
         switch (tipo) {
             case 1:
+                int fin[] = new int[2];
+        fin[0] = pos[0];
+        fin[1] = i;
                 this.solucionesHorizontal[2 * contador] = pos;
                 this.solucionesHorizontal[2 * contador + 1] = fin;
                 break;
 
             case 2:
+                int fin2[] = new int[2];
+                fin2[0] =i;
+                fin2[1] =  pos[1];
                 this.solucionesVerticales[2 * contador] = pos;
-                this.solucionesVerticales[2 * contador + 1] = fin;
+                this.solucionesVerticales[2 * contador + 1] = fin2;
                 break;
 
             case 3:
+                int fin3[] = new int[2];
+                fin3[0] =i;
+                fin3[1] =  j;
                 this.solucionesInclinada[2 * contador] = pos;
-                this.solucionesInclinada[2 * contador + 1] = fin;
+                this.solucionesInclinada[2 * contador + 1] = fin3;
                 break;
 
         }
     }
 
+    /**
+     * Cuenta cuantas veces está el decimal de forma vertical
+     * @param decimal
+     * @return 
+     */
     public int getCuantasVeces_Vertical(int decimal) {
         int tamano = this.mySopaBinaria.length * this.mySopaBinaria[0].length;
         this.solucionesVerticales = new int[tamano * 2][this.posicionesSolucion[0].length];
@@ -191,7 +213,7 @@ public class SopaBinaria {
                         break;//Rompe en el momento que una de los bits no se igual al buscado
                     }
                     if (iNumero == numero.length - 1) {
-                        agregarPos(pos, i, contador, 2);
+                        agregarPos(pos, i, contador, 2,0);
                         contador++;
                     }
                     iNumero++;
@@ -205,17 +227,22 @@ public class SopaBinaria {
                         break; //Rompe en el momento que una de los bits no se igual al buscado
                     }
                     if (iNumero == numero.length - 1) {
-                        agregarPos(pos, i, contador, 2);
+                        agregarPos(pos, i, contador, 2,0);
                         contador++;
                     }
                     iNumero++;
                 }
             }
         }
-
+        this.cantSolucionesV=contador;
         return contador;
     }
 
+    /**
+     * Cuenta cuantas veces está el numero en forma diagonal
+     * @param decimal
+     * @return 
+     */
     public int getCuantasVeces_Diagonal(int decimal) {
         int tamano = this.mySopaBinaria.length * this.mySopaBinaria[0].length;
         this.solucionesInclinada = new int[tamano * 4][this.posicionesSolucion[0].length];
@@ -235,7 +262,7 @@ public class SopaBinaria {
                         break;//Rompe en el momento que una de los bits no se igual al buscado
                     }
                     if (iNumero == numero.length - 1) {
-                        agregarPos(pos, i, contador, 3);
+                        agregarPos(pos, i, contador, 3,j);
                         contador++;
                     }
                     iNumero++;
@@ -255,7 +282,7 @@ public class SopaBinaria {
                         break; //Rompe en el momento que una de los bits no se igual al buscado
                     }
                     if (iNumero == numero.length - 1) {
-                        agregarPos(pos, i, contador, 3);
+                        agregarPos(pos, i, contador, 3,j);
                         contador++;
                     }
                     iNumero++;
@@ -277,7 +304,7 @@ public class SopaBinaria {
                         break;//Rompe en el momento que una de los bits no se igual al buscado
                     }
                     if (iNumero == numero.length - 1) {
-                        agregarPos(pos, i, contador, 3);
+                        agregarPos(pos, i, contador, 3,j);
                         contador++;
                     }
                     iNumero++;
@@ -298,7 +325,7 @@ public class SopaBinaria {
                         break; //Rompe en el momento que una de los bits no se igual al buscado
                     }
                     if (iNumero == numero.length - 1) {
-                        agregarPos(pos, i, contador, 3);
+                        agregarPos(pos, i, contador, 3,j);
                         contador++;
                     }
                     iNumero++;
@@ -307,10 +334,14 @@ public class SopaBinaria {
                 }
             }
         }
-
+        this.cantSolucionesI=contador;
         return contador;
     }
 
+    /**
+     * Devuelve la matriz de bits en forma de matriz de String
+     * @return 
+     */
     public String[][] getMatrizEnString() {
 
         String matrizEnString[][] = new String[this.mySopaBinaria.length][this.mySopaBinaria[0].length];
@@ -347,6 +378,12 @@ public class SopaBinaria {
         return msg;
     }
 
+    /**
+     * Busca cuantas veces está el numero en la matriz y tambien encuentra todas las posiciones de respuesta.
+     * @param decimal
+     * @return
+     * @throws IOException 
+     */
     public String buscar(int decimal) throws IOException {
 
         System.out.println(toString());
@@ -373,6 +410,8 @@ public class SopaBinaria {
                         + this.getCuantasVeces_Vertical(decimal);
 
         }
+        this.cantSoluciones=contador;
+        
         if (esCapicua(numero)) {
             contador = contador / 2;
         }
@@ -381,7 +420,8 @@ public class SopaBinaria {
         } else {
             msg = "Se econtro el numero decimal " + decimal + " en binario : " + decimalBinario + "\n" + contador + " veces en la sopa binaria.";
         }
-        buscarUnosPrueba(3);//Si se trata de 1 o 0 toca usar la lista soluciones.
+        //buscarUnosPrueba(1);//Si se trata de 1 o 0 toca usar la lista soluciones.
+        resaltarLista();
         return msg;
 
     }
@@ -408,6 +448,11 @@ public class SopaBinaria {
 
     }
 
+    /**
+     * Retorna si el numero es un numero Capicua 
+     * @param numero
+     * @return 
+     */
     private boolean esCapicua(Bit numero[]) {
 
         boolean capicua = false;
@@ -449,14 +494,22 @@ public class SopaBinaria {
 
     }
 
-    public void resaltarLista(int lista) {
-        int soluciones[][] = new int[1000][2];
-        int iSol=0;
-        for (int i = 0; i < this.solucionesHorizontal.length; i++) {
+    /**
+     * Pone el estado marcado a los bits que formen parte de una solución
+     */
+    public void resaltarLista() {
+        
+        int iSol = 0;
+        
+        for (int i = 0; i < this.cantSolucionesH*2; i++) {
+            
             int pos1[] = this.solucionesHorizontal[i];
             int pos2[] = this.solucionesHorizontal[i + 1];
-            int menor;
-            int limite;
+            this.mySopaBinaria[pos1[0]][pos1[1]].setMarcado(true);
+            this.mySopaBinaria[pos2[0]][pos2[1]].setMarcado(true);
+            
+            int menor=0;
+            int limite=0;
             if (pos1[1] < pos2[1]) {
                 menor = pos1[1];
                 limite = pos2[1];
@@ -466,19 +519,155 @@ public class SopaBinaria {
             }
             for (int j = menor; j < limite; j++) {
                 this.mySopaBinaria[pos1[0]][j].setMarcado(true);
-                int nuevaPos[]=new int [2];
-                nuevaPos[0]=pos1[0];
-                nuevaPos[1]=j;
-                soluciones[i]=nuevaPos;
                 
+                
+
             }
             this.mySopaBinaria[pos1[0]][limite].setMarcado(true);
-            int nuevaPos2[]=new int [2];
-                nuevaPos2[0]=pos1[0];
-                nuevaPos2[1]=limite;
-                soluciones[i]=nuevaPos2;         
+            
+          
             i++;
             iSol++;
         }
+         
+        for (int i = 0; i <this.cantSolucionesV*2; i++) {
+            
+            int pos1[] = this.solucionesVerticales[i];
+            int pos2[] = this.solucionesVerticales[i + 1];
+            this.mySopaBinaria[pos1[0]][pos1[1]].setMarcado(true);
+            this.mySopaBinaria[pos2[0]][pos2[1]].setMarcado(true);
+            
+            int menor=0;
+            int limite=0;
+            if (pos1[0] < pos2[0]) {
+                menor = pos1[0];
+                limite = pos2[0];
+            } else {
+                menor = pos2[0];
+                limite = pos1[0];
+            }
+            for (int j = menor; j < limite; j++) {
+                this.mySopaBinaria[j][pos1[1]].setMarcado(true);
+                
+             
+
+            }
+            this.mySopaBinaria[limite][pos1[1]].setMarcado(true);
+            
+            
+            i++;
+            iSol++;
+        }
+         
+        for (int i = 0; i < this.cantSolucionesI*2; i++) {
+            int pos1[] = this.solucionesInclinada[i];
+            int pos2[] = this.solucionesInclinada[i + 1];
+            
+            this.mySopaBinaria[pos1[0]][pos1[1]].setMarcado(true);
+            this.mySopaBinaria[pos2[0]][pos2[1]].setMarcado(true);
+            int menor=0;
+            int limite=0;
+            if (pos1[1] < pos2[1]) {
+                menor = pos1[1];
+                limite = pos2[1];
+            } else {
+                menor = pos2[1];
+                limite = pos1[1];
+            }
+                //Abajo a la derecha
+                if (menor == pos1[1] && pos1[0] < pos2[0]) {
+                     
+                    int columnas = menor;
+                    for (int k = pos1[0]; k < limite; k++) {
+                        
+
+                        this.mySopaBinaria[k][columnas].setMarcado(true);
+                        
+                        columnas++;
+                    }
+                    this.mySopaBinaria[pos2[0]][limite].setMarcado(true);
+                    
+                    i++;
+                    iSol++;
+
+                } 
+                 
+                else if (menor == pos2[1] && pos2[0] < pos1[0]) {
+                    
+                    int columnas = pos2[1];
+                    for (int k = pos2[0]; k < limite; k++) {
+                        
+                        this.mySopaBinaria[k][columnas].setMarcado(true);
+                        
+                        columnas++;
+                    }
+                    this.mySopaBinaria[pos1[0]][limite].setMarcado(true);
+                    
+                    i++;
+                    iSol++;
+
+                }
+                //Arriba a la derecha
+                else if (menor == pos1[1] && pos1[0] > pos2[0]) {
+                    
+                    limite = pos2[0];
+                    int columnas = pos1[1];
+                    for (int k = pos1[0]; k > limite; k--) {
+                        System.out.println("P1:"+k+" , "+columnas+" "+limite);
+                        this.mySopaBinaria[k][columnas].setMarcado(true);
+                        
+                        columnas++;
+                    }
+                    
+                    i++;
+                    iSol++;
+
+                } else if (menor == pos2[1] && pos2[0] > pos1[0]) {
+                    
+                    int columnas = pos2[1];
+                    
+                    for (int k = pos2[0]; k > limite; k--) {
+                        System.out.println("P2:"+k+" , "+columnas+" "+limite);
+                        this.mySopaBinaria[k][columnas].setMarcado(true);
+                       
+                        columnas++;
+                    }
+                    
+                    i++;
+                    iSol++;
+
+                }
+            }
+        
+         
+        this.cantSoluciones=iSol;
+       
+       
+    }
+    /**
+     * Retorna una matriz de posciones con todas las casillas que forman parte de una solución
+     * @return 
+     */
+    public int [][] posMarcadas(){
+        
+        resaltarLista();
+        int soluciones[][]=new int [this.cantSoluciones*4][2];
+        int fila=0;
+        for(int i=0;i<this.mySopaBinaria.length;i++){
+            for(int j=0;j<this.mySopaBinaria[i].length;j++){
+                if(this.mySopaBinaria[i][j].isMarcado()){
+                     int nuevaPos[] = new int[2];
+                        nuevaPos[0] = i;
+                        nuevaPos[1] = j;
+                        
+                        soluciones[fila] = nuevaPos;
+                        fila++;
+                }
+            
+            }
+            
+        
+        }
+        return soluciones;
     }
 }
